@@ -1,0 +1,30 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("")
+}
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+model User {
+  id            Int    @id @default(autoincrement())
+  username      String
+  phoneNumber   String
+  email         String
+  password      String
+  balance       Float  @default(5.0)
+  coinsSent     Coin[] @relation("SentCoins")
+  coinsReceived Coin[] @relation("ReceivedCoins")
+}
+
+model Coin {
+  id         Int    @id @default(autoincrement())
+  message    String
+  amount     Float
+  sender     User   @relation("SentCoins", fields: [senderId], references: [id])
+  senderId   Int
+  receiver   User   @relation("ReceivedCoins", fields: [receiverId], references: [id])
+  receiverId Int
+}
